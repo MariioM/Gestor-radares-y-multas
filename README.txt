@@ -9,5 +9,5 @@ límite, Umbral 0-20%, Umbral 20-40%, >40%).
 /* ASIGNACIÓN CARPETAS */
 
 bin ==> Ejecutable (u otros binarios)
-data ==> ficheros y datos
-source ==> programas sin compilar
+data ==> Ficheros y datos
+source ==> Programas sin compilar
