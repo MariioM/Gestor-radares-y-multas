@@ -46,19 +46,45 @@ int main(void){
 	FILE *pf_multas;
 	int tipo_carga;
 
-	printf("Elija tipo carga\n");
-	scanf("%d",&tipo_carga);
-	if (tipo_carga == 0) //Carga manual
-    {
-      /*A rellenar por el alumno*/
+	do{
+        printf("\nElija tipo carga: \n  0) Manualmente.\n  1) Automáticamente.\n  2) Salir del programa.\n");
+        scanf("%d",&tipo_carga);
 
-    }
-    else{
+        switch(tipo_carga) {
+            case 0:
+            //Carga Manual de Radares y Multas
 
-	   /*A rellenar por el alumno*/
-	
+            //Para poder asignar memoria dinámica a un vector, hemos de saber el tamaño que usaremos. Esto es, el número de radares y de multas que se registrarán.
+            do{ 
+                printf("\nIntroduce el numero de radares: "); 
+                scanf("%d",&num_radares); 
+                if (num_radaress<0){ 
+                printf("\nERROR"); 
+                }    
+            }while(num_radares<0); 
+			//Asignacion de m. d. al vector radares
 
-    }
+            do{ 
+                printf("\nIntroduce el numero de multas: "); 
+                scanf("%d",&num_multas); 
+                if (num_multas<0){ 
+                printf("\nERROR"); 
+                }    
+            }while(num_multas<0);
+			//Asignacion de m. d. al vector multas
+            
+            break;
+
+            case 1:
+            //Carga Automática de Radares y Multas
+            break;
+
+            default:
+            program = false;
+            printf("\nSaliendo del programa...");
+            break;
+        }
+    }while(program);
 
 	return 0;
 }
