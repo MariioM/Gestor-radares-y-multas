@@ -70,7 +70,7 @@ void CargaRadaresFichero(FILE *pf_radares, T_RADAR *radares){
 }
 
 void CalculaNumRadares(FILE *pf_radares,int *num_radares){
-	//Se declara una variable que controlará si el fichero ha finalizado o continua
+	//Se declara una variable que controlará si el fichero ha finalizado o continúa
 	char control;
 	//Se abre el fichero de los radares en modo lectura
 	pf_radares = fopen("../data/radares.txt","r");
@@ -92,7 +92,7 @@ void CalculaNumRadares(FILE *pf_radares,int *num_radares){
 }
 
 void CalculaNumMultas(FILE *pf_multas,int *num_multas){
-	//Se declara una variable que controlará si el fichero ha finalizado o continua
+	//Se declara una variable que controlará si el fichero ha finalizado o continúa
 	char control = 'a';
 	//Se abre el fichero de las multas en modo lectura
 	pf_multas = fopen("../data/multas.txt","r");
@@ -106,7 +106,7 @@ void CalculaNumMultas(FILE *pf_multas,int *num_multas){
 	while (control != EOF)
 	{
 		control = fgetc(pf_multas);
-		if(control == '\n'){ //Un salto de línea es indicativo de que hay un radar para añadir
+		if(control == '\n'){ //Un salto de línea es indicativo de que hay una multa para añadir
 			*num_multas += 1;
 		}
 	}
