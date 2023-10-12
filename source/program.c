@@ -53,7 +53,7 @@ int main(void)
 	num_radares = 1;
 
 	do {
-        printf("\nElija tipo carga: \n\t  0) Manualmente.\n\t  1) Automáticamente.\n\t  2) Salir del programa.\n");
+        printf("\n  Elija tipo carga: \n\t 0) Manualmente.\n\t 1) Automáticamente.\n\t 2) Salir del programa.\n  => ");
         scanf("%d",&tipo_carga);
 
         switch(tipo_carga) {
@@ -64,7 +64,7 @@ int main(void)
 			//	Esto es, el número de radares y de multas que se registrarán.
             do{ 
 
-                printf("\nIntroduzca el numero de radares: "); 
+                printf("\n  Introduzca el numero de radares: "); 
                 scanf("%d",&num_radares); 
 
                 if (num_radares < 0)
@@ -76,9 +76,10 @@ int main(void)
 
 			// Asignacion de m. d. al vector radares
 			radares = (T_RADAR *)malloc(num_radares * sizeof(T_RADAR));
+			cargaRadaresManual(radares, num_radares);
 
-            do{ 
-                printf("\nIntroduce el numero de multas: "); 
+            do { 
+                printf("\n  Introduce el numero de multas: "); 
                 scanf("%d",&num_multas); 
 
                 if (num_multas < 0)
@@ -140,6 +141,7 @@ void CalculaNumRadares(FILE *pf_radares,int *num_radares)
 			*num_radares += 1;
 		}
 	}
+
 	fclose(pf_radares);
 }
 
@@ -164,6 +166,7 @@ void CalculaNumMultas(FILE *pf_multas,int *num_multas)
 			*num_multas += 1;
 		}
 	}
+
 	fclose(pf_multas);
 }
 
@@ -180,7 +183,10 @@ int BuscarRadar(int identificador_radar, T_RADAR *pradares, int num_radares)
 
 void cargaRadaresManual (T_RADAR *radares, int num_radares)
 {
-	/*A rellenar por el alumno*/
+	for (int i = 0; i < num_radares; i++)
+	{
+		RellenarUnRadar(&radares[i]);
+	}
 }
 
 void cargaMultasManual(T_MULTA *multas, int num_multas)
@@ -190,7 +196,18 @@ void cargaMultasManual(T_MULTA *multas, int num_multas)
 
 void RellenarUnRadar(T_RADAR *p_radar)
 {
-
+	printf("\n  Introduzca la información del radar:\n");
+	printf("\t* ID del radar: ");
+	scanf("%d", &(*p_radar).id_radar);
+	printf("\t* Velocidad limite (km/h): ");
+	scanf("%d", &(*p_radar).velocidad_limite);
+	printf("\t* Umbral 0-20%c %c: %c", 37, 128);
+	scanf("%d", &(*p_radar).umbral20);
+	printf("\t* Umbral 20-40%c %c: %c", 37, 128);
+	scanf("%d", &(*p_radar).umbral40);
+	printf("\t* Umbral >40%c %c: %c", 37, 128);
+	scanf("%d", &(*p_radar).umbral_resto);
+	printf("  Radar almacenado correctamente!\n");
 }
 
 void RellenarUnaMulta(T_MULTA *p_multa)
