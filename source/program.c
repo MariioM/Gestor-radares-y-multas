@@ -31,6 +31,10 @@ typedef struct {
 /// @param num_radares Entero que representa el número total de
 /// 				   radares que se desean introducir.
 void cargaRadaresManual (T_RADAR *radares, int num_radares);
+/// @brief Controla la entrada de datos manual de las multas.
+/// @param radares Array de multas a rellenar.
+/// @param num_radares Entero que representa el número total de
+/// 				   multas que se desean introducir.
 void cargaMultasManual(T_MULTA *multas, int num_multas);
 double CalculaMultas(T_MULTA *multas, int num_multas, T_RADAR *pradares, int num_radares);
 void CalculaNumRadares(FILE *pf_radares,int *num_radares);
@@ -40,6 +44,8 @@ void CargaMultasFichero(FILE *pf_multas, T_MULTA *multas);
 /// @brief Permite al usuario rellenar las diferentes características de los radares.
 /// @param p_radar Radar cuyas características se van a introducir.
 void RellenarUnRadar(T_RADAR *p_radar);
+/// @brief Permite al usuario rellenar las diferentes características de las multas.
+/// @param p_radar Multa cuyas características se van a introducir.
 void RellenarUnaMulta(T_MULTA *p_multa);
 int BuscarRadar(int identificador_radar, T_RADAR *pradares, int num_radares);
 
