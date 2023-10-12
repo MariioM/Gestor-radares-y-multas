@@ -199,7 +199,10 @@ void cargaRadaresManual (T_RADAR *radares, int num_radares)
 
 void cargaMultasManual(T_MULTA *multas, int num_multas)
 {
-	/*A rellenar por el alumno*/
+	for (int i = 0; i < num_multas; i++)
+	{
+		RellenarUnaMulta(&multas[i]);
+	}
 }
 
 void RellenarUnRadar(T_RADAR *p_radar)
@@ -220,5 +223,20 @@ void RellenarUnRadar(T_RADAR *p_radar)
 
 void RellenarUnaMulta(T_MULTA *p_multa)
 {
-	
+	printf("\n  Introduzca la información de la multa:\n");
+	printf("\t* Día: ");
+	scanf("%d", &(*p_multa).fecha.dia);
+	printf("\t* Mes: ");
+	scanf("%d", &(*p_multa).fecha.mes);
+	printf("\t* Año: ");
+	scanf("%d", &(*p_multa).fecha.anio);
+	printf("\n\t* ID del radar: ");
+	scanf("%d", &(*p_multa).id_radar);
+	printf("\t* Matrícula (8 caracteres): ");
+	scanf("%s", &(*p_multa).matricula);
+	printf("\t* Velocidad (km/h): ");
+	scanf("%d", &(*p_multa).velocidad);
+	printf("\t* Multa: ", 37, 128);
+	scanf("%f", &(*p_multa).multa);
+	printf("  Multa almacenada correctamente!\n");
 }
