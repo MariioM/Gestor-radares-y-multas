@@ -99,6 +99,8 @@ int main(void)
 
 			case 2:
 				printf("\nSaliendo del programa...");
+				scanf("%c"); // Pulsar enter para continuar.
+				exit(1);
 				break;
 
             default:
