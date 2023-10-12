@@ -85,7 +85,7 @@ int main(void)
 			cargaRadaresManual(radares, num_radares);
 
             do { 
-                printf("\n  Introduce el numero de multas: "); 
+                printf("\n  Introduzca el numero de multas: "); 
                 scanf("%d",&num_multas); 
 
                 if (num_multas < 0)
@@ -96,7 +96,9 @@ int main(void)
             } while(num_multas < 0);
 
 			// Asignacion de m. d. al vector multas
-            
+            multas = (T_MULTA *)malloc(num_multas * sizeof(T_MULTA));
+			cargaMultasManual(multas, num_multas);
+
             break;
 
             case 1:
