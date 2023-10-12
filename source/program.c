@@ -75,6 +75,7 @@ int main(void)
             } while(num_radares < 0); 
 
 			// Asignacion de m. d. al vector radares
+			radares = (T_RADAR *)malloc(num_radares * sizeof(T_RADAR));
 
             do{ 
                 printf("\nIntroduce el numero de multas: "); 
@@ -87,7 +88,7 @@ int main(void)
 				
             } while(num_multas < 0);
 
-			//Asignacion de m. d. al vector multas
+			// Asignacion de m. d. al vector multas
             
             break;
 
@@ -166,12 +167,14 @@ void CalculaNumMultas(FILE *pf_multas,int *num_multas)
 	fclose(pf_multas);
 }
 
-double CalculaMultas(T_MULTA *pmultas, int num_multas, T_RADAR *pradares, int num_radares){
+double CalculaMultas(T_MULTA *pmultas, int num_multas, T_RADAR *pradares, int num_radares)
+{
 	/*A rellenar por el alumno*/
 }
 
 
-int BuscarRadar(int identificador_radar, T_RADAR *pradares, int num_radares){
+int BuscarRadar(int identificador_radar, T_RADAR *pradares, int num_radares)
+{
 	/*A rellenar por el alumno*/
 }
 
@@ -183,4 +186,14 @@ void cargaRadaresManual (T_RADAR *radares, int num_radares)
 void cargaMultasManual(T_MULTA *multas, int num_multas)
 {
 	/*A rellenar por el alumno*/
+}
+
+void RellenarUnRadar(T_RADAR *p_radar)
+{
+
+}
+
+void RellenarUnaMulta(T_MULTA *p_multa)
+{
+	
 }
