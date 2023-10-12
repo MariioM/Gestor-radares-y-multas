@@ -26,6 +26,10 @@ typedef struct {
 	int umbral_resto;
 } T_RADAR;
 
+/// @brief Controla la entrada de datos manual de los radares.
+/// @param radares Array de radares a rellenar.
+/// @param num_radares Entero que representa el número total de
+/// 				   radares que se desean introducir.
 void cargaRadaresManual (T_RADAR *radares, int num_radares);
 void cargaMultasManual(T_MULTA *multas, int num_multas);
 double CalculaMultas(T_MULTA *multas, int num_multas, T_RADAR *pradares, int num_radares);
@@ -33,6 +37,8 @@ void CalculaNumRadares(FILE *pf_radares,int *num_radares);
 void CalculaNumMultas(FILE *pf_multas,int *num_multas);
 void CargaRadaresFichero(FILE *pf_radares, T_RADAR *radares);
 void CargaMultasFichero(FILE *pf_multas, T_MULTA *multas);
+/// @brief Permite al usuario rellenar las diferentes características de los radares.
+/// @param p_radar Radar cuyas características se van a introducir.
 void RellenarUnRadar(T_RADAR *p_radar);
 void RellenarUnaMulta(T_MULTA *p_multa);
 int BuscarRadar(int identificador_radar, T_RADAR *pradares, int num_radares);
@@ -201,11 +207,11 @@ void RellenarUnRadar(T_RADAR *p_radar)
 	scanf("%d", &(*p_radar).id_radar);
 	printf("\t* Velocidad limite (km/h): ");
 	scanf("%d", &(*p_radar).velocidad_limite);
-	printf("\t* Umbral 0-20%c %c: %c", 37, 128);
+	printf("\t* Umbral 0-20%c %c: ", 37, 128);
 	scanf("%d", &(*p_radar).umbral20);
-	printf("\t* Umbral 20-40%c %c: %c", 37, 128);
+	printf("\t* Umbral 20-40%c %c: ", 37, 128);
 	scanf("%d", &(*p_radar).umbral40);
-	printf("\t* Umbral >40%c %c: %c", 37, 128);
+	printf("\t* Umbral >40%c %c: ", 37, 128);
 	scanf("%d", &(*p_radar).umbral_resto);
 	printf("  Radar almacenado correctamente!\n");
 }
