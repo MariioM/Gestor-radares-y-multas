@@ -110,6 +110,14 @@ int main(void)
             case 1:
 				// Se llama a las funciones que calculan el número de radares y de multas en el fichero
 				CalculaNumRadares(pf_radares, &num_radares);
+                printf("Hay %d radares.", num_radares);
+                radares = (T_RADAR *)malloc(num_radares * sizeof(T_RADAR));
+                CargaRadaresFichero(pf_radares, radares);
+                int i = 0;
+                while(i <= num_radares){
+                    printf("%d %d %d %d %d", (*radares).id_radar, (*radares).velocidad_limite, (*radares).umbral20, (*radares).umbral40, (*radares).umbral_resto);
+                    i++;
+                }
 				CalculaNumMultas(pf_multas, &num_multas);
 				break;
 
@@ -130,17 +138,17 @@ int main(void)
 
 void CargaRadaresFichero(FILE *pf_radares, T_RADAR *radares)
 {
+    int control;
     //Se abre el fichero en modo de lectura para extraer la informació.
-	pf_radares = fopen("../data/radares.txt", "r");
+	pf_radares = fopen("radares.txt", "r");
     //Controlaré entonces si se ha abierto exitosamente.
     if(pf_radares == NULL){
         printf("Errores al abrir el fichero.");
         exit(1);
     }
-    while(pf_radares != NULL){
-        fprintf(pf_radares, "%d %d %d %d %d", (*radares).id_radar, (*radares).velocidad_limite, (*radares).umbral20, (*radares).umbral40, (*radares).umbral_resto);
+    while(control != EOF){
+        control = fprintf(pf_radares, "%d %d %d %d %d", (*radares).id_radar, (*radares).velocidad_limite, (*radares).umbral20, (*radares).umbral40, (*radares).umbral_resto);
         radares++;
-        printf("%d %d %d %d %d", (*radares).id_radar, (*radares).velocidad_limite, (*radares).umbral20, (*radares).umbral40, (*radares).umbral_resto);
     }
     
 }
@@ -150,7 +158,7 @@ void CalculaNumRadares(FILE *pf_radares,int *num_radares)
 	//Se declara una variable que controlará si el fichero ha finalizado o continúa.
 	char control;
 	//Se abre el fichero de los radares en modo lectura.
-	pf_radares = fopen("../data/radares.txt","r");
+	pf_radares = fopen("radares.txt","r");
 	//Se controla que el fichero se abra correctamente.
 	if(pf_radares == NULL)
 	{
@@ -176,7 +184,7 @@ void CalculaNumMultas(FILE *pf_multas,int *num_multas)
 	//Se declara una variable que controlará si el fichero ha finalizado o continúa
 	char control = 'a';
 	//Se abre el fichero de las multas en modo lectura
-	pf_multas = fopen("../data/multas.txt","r");
+	pf_multas = fopen("multas.txt","r");
 	//Se controla que el fichero se abra correctamente
 	if(pf_multas == NULL)
 	{
@@ -258,3 +266,4 @@ void RellenarUnaMulta(T_MULTA *p_multa)
 	scanf("%f", &(*p_multa).multa);
 	printf("  Multa almacenada correctamente!\n");
 }
+
