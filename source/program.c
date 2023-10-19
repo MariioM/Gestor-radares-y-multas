@@ -223,10 +223,11 @@ double CalculaMultas(T_MULTA *pmultas, int num_multas, T_RADAR *pradares, int nu
 {
 	//Se declara variables que contengan la id del radar y las velocidades
 	int idRadar, velocidadMulta, velocidadLimite, multaUmbral;
-	double umbral, multaTotal = 0;
+	double umbral, velocidadMultaAux, multaTotal = 0;
 	for(int i = 0; i < num_multas; i++){
 		idRadar = (*pmultas).id_radar;
 		velocidadMulta = (*pmultas).velocidad;
+		velocidadMultaAux = velocidadMulta;
 		for(int j = 0; j < num_radares; j++){
 			if(idRadar == (*pradares).id_radar){
 				velocidadLimite = (*pradares).velocidad_limite;
@@ -234,7 +235,7 @@ double CalculaMultas(T_MULTA *pmultas, int num_multas, T_RADAR *pradares, int nu
 				pradares ++;
 			}
 		}
-		umbral = ((velocidadMulta/velocidadLimite)-1) * 100;
+		umbral = ((velocidadMultaAux/velocidadLimite)-1) * 100;
 		if(umbral > 0 && umbral < 20){
 			multaUmbral = (*pradares).umbral20;
 			multaTotal += multaUmbral;
