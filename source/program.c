@@ -41,7 +41,7 @@ void cargaMultasManual(T_MULTA *multas, int num_multas);
 /// @param pradares Array de la lista de radares
 /// @param num_radares Entero que representa el número total de radares
 /// @return Devuelve el importe total
-double CalculaMultas(T_MULTA *multas, int num_multas, T_RADAR *pradares, int num_radares);
+double CalculaMultas(T_MULTA *multas, int num_multas, T_RADAR *pradares, int num_radares, FILE *pf_extended);
 /// @brief Calcula el número de radares que hay en un fichero
 /// @param pf_radares Fichero con los datos de los radares
 /// @param num_radares Puntero que contiene el número de radares
@@ -78,6 +78,7 @@ int main(void)
 	float total_multas;
 	FILE *pf_radares;
 	FILE *pf_multas;
+	FILE *pf_extended;
 	int tipo_carga;
 
 	num_multas = 1;
@@ -135,7 +136,7 @@ int main(void)
 				CalculaNumMultas(pf_multas, &num_multas);
 				multas = (T_MULTA *)malloc(num_multas * sizeof(T_MULTA));
 				CargaMultasFichero(pf_multas, multas, num_multas);
-				CalculaMultas(multas, num_multas, radares, num_radares);
+				CalculaMultas(multas, num_multas, radares, num_radares, pf_extended);
 				break;
 
 			case 2:
@@ -238,43 +239,57 @@ void CalculaNumMultas(FILE *pf_multas,int *num_multas)
 	fclose(pf_multas);
 }
 
-double CalculaMultas(T_MULTA *pmultas, int num_multas, T_RADAR *pradares, int num_radares)
+double CalculaMultas(T_MULTA *pmultas, int num_multas, T_RADAR *pradares, int num_radares, FILE *pf_extended)
 {
 	//Se declara variables que contengan la id del radar y las velocidades
 	int idRadar, velocidadMulta, velocidadLimite, multaUmbral;
 	double umbral, velocidadMultaAux, multaTotal = 0;
-	//Se recorre el fichero de las multas para sacar los datos necesarios
-	for(int i = 0; i < num_multas; i++){
-		idRadar = (*pmultas).id_radar;
-		velocidadMulta = (*pmultas).velocidad;
-		velocidadMultaAux = velocidadMulta;
-		//Se recorre el fichero de los radares para calcular la multa
-		for(int j = 0; j < num_radares; j++){
-			if(idRadar == (*pradares).id_radar){
-				velocidadLimite = (*pradares).velocidad_limite;
-				//Se vuelve al inicio del puntero m.d
-				pradares -= j;
-				break;
-			}else{
-				pradares ++;
+	//Se declara una variable para controlar la posición del fichero
+	char control = 'a';
+	pf_extended = fopen("../data/extended.txt", "a");
+	//Se comprueba que el fichero exista
+	if(pf_extended == NULL){
+		printf("Error al abrir el archivo extented.txt");
+	}
+	else{
+		//Se recorre el array de las multas para sacar los datos necesarios
+		for(int i = 0; i < num_multas; i++){
+			idRadar = (*pmultas).id_radar;
+			velocidadMulta = (*pmultas).velocidad;
+			velocidadMultaAux = velocidadMulta;
+			//Se recorre el array de los radares para calcular la multa
+			for(int j = 0; j < num_radares; j++){
+				if(idRadar == (*pradares).id_radar){
+					velocidadLimite = (*pradares).velocidad_limite;
+					//Se vuelve al inicio del puntero m.d
+					pradares -= j;
+					break;
+				}else{
+					pradares ++;
+				}
 			}
+			//Se calcula el porcentaje que se excedió en la multa
+			umbral = ((velocidadMultaAux/velocidadLimite)-1) * 100;
+			//Se calculan las multas en función del umbral excedido
+			if(umbral > 0 && umbral < 20){
+				multaUmbral = (*pradares).umbral20;
+				multaTotal += multaUmbral;
+			}
+			else if(umbral > 20 && umbral < 40){
+				multaUmbral = (*pradares).umbral40;
+				multaTotal += multaUmbral;
+			}
+			else if(umbral > 40){
+				multaUmbral = (*pradares).umbral_resto;
+				multaTotal += multaUmbral;
+			}
+			//Se añade los datos de la multa con la multa individual calculada al fichero extended
+			fprintf(pf_extended, "%d %d %d %d %s %d %.2f\n", &(*pmultas).fecha.dia, &(*pmultas).fecha.mes, &(*pmultas).fecha.anio, &(*pmultas).id_radar, &(*pmultas).matricula, &(*pmultas).velocidad, multaUmbral);
+			pmultas++;
 		}
-		//Se calcula el porcentaje que se excedió en la multa
-		umbral = ((velocidadMultaAux/velocidadLimite)-1) * 100;
-		//Se calculan las multas en función del umbral excedido
-		if(umbral > 0 && umbral < 20){
-			multaUmbral = (*pradares).umbral20;
-			multaTotal += multaUmbral;
+		if(fclose(pf_extended) != 0){
+			printf("FATAL ERROR ==> Error al cerrar el fichero extended.txt");
 		}
-		else if(umbral > 20 && umbral < 40){
-			multaUmbral = (*pradares).umbral40;
-			multaTotal += multaUmbral;
-		}
-		else if(umbral > 40){
-			multaUmbral = (*pradares).umbral_resto;
-			multaTotal += multaUmbral;
-		}
-		pmultas++;
 	}
 	printf("Multa total: %.2f", multaTotal);
 	return multaTotal;
