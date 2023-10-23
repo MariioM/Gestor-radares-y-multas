@@ -231,6 +231,8 @@ double CalculaMultas(T_MULTA *pmultas, int num_multas, T_RADAR *pradares, int nu
 		for(int j = 0; j < num_radares; j++){
 			if(idRadar == (*pradares).id_radar){
 				velocidadLimite = (*pradares).velocidad_limite;
+				pradares -= j;
+				break;
 			}else{
 				pradares ++;
 			}
