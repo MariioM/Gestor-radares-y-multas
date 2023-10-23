@@ -78,13 +78,13 @@ int main(void)
 	float total_multas;
 	FILE *pf_radares;
 	FILE *pf_multas;
-	int tipo_carga;
+	int tipo_carga,  opcion, idRadarBuscado, posicion_buscada;
 
 	num_multas = 1;
 	num_radares = 1;
 
 	do {
-        printf("\n  Elija tipo carga: \n\t 0) Manualmente.\n\t 1) Automáticamente.\n\t 2) Salir del programa.\n  => ");
+        printf("\n  Elija tipo carga: \n\t 0) Manualmente.\n\t 1) Automaticamente.\n\t 2) Salir del programa.\n  => ");
         scanf("%d",&tipo_carga);
 
         switch(tipo_carga) {
@@ -95,7 +95,7 @@ int main(void)
 			//	Esto es, el número de radares y de multas que se registrarán.
             do{ 
 
-                printf("\n  Introduzca el numero de radares: "); 
+                printf("\nIntroduzca el numero de radares: "); 
                 scanf("%d",&num_radares); 
 
                 if (num_radares < 0)
@@ -110,7 +110,7 @@ int main(void)
 			cargaRadaresManual(radares, num_radares);
 
             do { 
-                printf("\n  Introduzca el numero de multas: "); 
+                printf("\nIntroduzca el numero de multas: "); 
                 scanf("%d",&num_multas); 
 
                 if (num_multas < 0)
@@ -135,7 +135,60 @@ int main(void)
 				CalculaNumMultas(pf_multas, &num_multas);
 				multas = (T_MULTA *)malloc(num_multas * sizeof(T_MULTA));
 				CargaMultasFichero(pf_multas, multas, num_multas);
-				CalculaMultas(multas, num_multas, radares, num_radares);
+				break;
+
+			case 2:
+				printf("\nSaliendo del programa...");
+				scanf("%c"); // Pulsar enter para continuar.
+				exit(1);
+				break;
+
+            default:
+				printf("\nOpción incorrecta.");
+            	break;
+        }
+					printf("\n  Elija una operación: \n\t 0) Calcular la Suma Total de las multas registradas.\n\t 1) Buscar un Radar mediante su ID..\n\t 2) Salir del programa.\n  => ");
+        scanf("%d",&opcion);
+
+        switch(opcion) {
+            case 0:
+            //CalculaMultas
+			//Dicha función se encargará de aplicar las sanciones correspondientes a cada vehiculo, y de sumar el importe total de todas ellas juntas.
+            CalculaMultas(multas, num_multas, radares, num_radares);
+
+            break;
+
+            case 1:
+				//BuscarRadar
+				//El usuario tecleará por pantalla el id del radar que desea buscar, se le mostrará
+				//si existe o no, y se le mostrará su información.
+
+				//Pedimos ID al usuario
+				printf("\nIntroduzca el id del radar que quiere buscar: ");
+				scanf("%d", &idRadarBuscado);
+
+				//La variable existe registrará si existe o no el radar que se busca
+				posicion_buscada = BuscarRadar(idRadarBuscado, radares, num_radares);
+				if(posicion_buscada != -1){
+					printf("\nEl radar con id: %d existe.\n", idRadarBuscado);
+					for(int i = 0; i < num_radares; i++){
+						if(i == posicion_buscada){
+							//Se muestran los datos que contiene el radar buscado.
+							printf("\nLa velocidad límite del radar es: %d.", (*radares).velocidad_limite);
+							printf("\nLa sancion del umbral de 0-20 porciento del radar es: %d.", (*radares).umbral20);
+							printf("\nLa sancion del umbral de 20-40 porciento del radar es: %d.", (*radares).umbral40);
+							printf("\nLa sancion del umbral de +40 porciento del radar es: %d.\n\n", (*radares).umbral_resto);
+						}
+						else{
+							radares++; //Si no es la posición que buscamos, necesito que el puntero apunte al siguiente radar del vector radares.
+						}
+					}
+					radares = radares - posicion_buscada; //Una vez encontrado el radar que buscamos, devolvemos el puntero a la primera posición, por si lo utilizamos de nuevo más adelante.
+				}
+				else{
+					printf("El radar con el id: %d no existe.", idRadarBuscado);
+				}
+
 				break;
 
 			case 2:
@@ -154,6 +207,7 @@ int main(void)
 
 	return 0;
 }
+
 void CargaMultasFichero(FILE *pf_multas, T_MULTA *multas, int num_multas){
 	int control = -2;
     //Se abre el fichero en modo de lectura para extraer la información.
@@ -241,9 +295,17 @@ void CalculaNumMultas(FILE *pf_multas,int *num_multas)
 double CalculaMultas(T_MULTA *pmultas, int num_multas, T_RADAR *pradares, int num_radares)
 {
 	//Se declara variables que contengan la id del radar y las velocidades
-	int idRadar, velocidadMulta, velocidadLimite, multaUmbral;
+	int idRadar, velocidadMulta, velocidadLimite, multaUmbral, posicionradar;
 	double umbral, velocidadMultaAux, multaTotal = 0;
 	//Se recorre el fichero de las multas para sacar los datos necesarios
+	FILE *infoext;
+	//Se abre el fichero en modo Sobreescribir, para crear el fichero de texto y añadir información en él en el caso de que el programa sea ejecutado dos veces.
+	infoext = fopen("../data/informe_extendido.txt", "a");
+	if(infoext == NULL){
+		//Verifico el correcto acceso al fichero
+		printf("Error abriendo el fichero");
+	}
+
 	for(int i = 0; i < num_multas; i++){
 		idRadar = (*pmultas).id_radar;
 		velocidadMulta = (*pmultas).velocidad;
@@ -252,8 +314,7 @@ double CalculaMultas(T_MULTA *pmultas, int num_multas, T_RADAR *pradares, int nu
 		for(int j = 0; j < num_radares; j++){
 			if(idRadar == (*pradares).id_radar){
 				velocidadLimite = (*pradares).velocidad_limite;
-				//Se vuelve al inicio del puntero m.d
-				pradares -= j;
+				posicionradar = j;
 				break;
 			}else{
 				pradares ++;
@@ -262,21 +323,33 @@ double CalculaMultas(T_MULTA *pmultas, int num_multas, T_RADAR *pradares, int nu
 		//Se calcula el porcentaje que se excedió en la multa
 		umbral = ((velocidadMultaAux/velocidadLimite)-1) * 100;
 		//Se calculan las multas en función del umbral excedido
+		//Escribo mediante el fprintf los datos de cada multa más la sancion correspondiente en el fichero información_ectendida.
 		if(umbral > 0 && umbral < 20){
 			multaUmbral = (*pradares).umbral20;
+			fprintf(infoext, "%d/%d/%d %d %s %d %d\n", (*pmultas).fecha.dia, (*pmultas).fecha.mes, (*pmultas).fecha.anio, (*pmultas).id_radar, (*pmultas).matricula, (*pmultas).velocidad, multaUmbral);
 			multaTotal += multaUmbral;
 		}
 		else if(umbral > 20 && umbral < 40){
 			multaUmbral = (*pradares).umbral40;
+			fprintf(infoext, "%d/%d/%d %d %s %d %d\n", (*pmultas).fecha.dia, (*pmultas).fecha.mes, (*pmultas).fecha.anio, (*pmultas).id_radar, (*pmultas).matricula, (*pmultas).velocidad, multaUmbral);
 			multaTotal += multaUmbral;
 		}
 		else if(umbral > 40){
 			multaUmbral = (*pradares).umbral_resto;
+			fprintf(infoext, "%d/%d/%d %d %s %d %d\n", (*pmultas).fecha.dia, (*pmultas).fecha.mes, (*pmultas).fecha.anio, (*pmultas).id_radar, (*pmultas).matricula, (*pmultas).velocidad, multaUmbral);
 			multaTotal += multaUmbral;
 		}
 		pmultas++;
+		pradares -= posicionradar; //Vuelvo a restablecer el puntero, para que apunte al primer radar a la hora de volver a leerlos despues de leer la primera multa.
 	}
-	printf("Multa total: %.2f", multaTotal);
+
+	printf("La suma de todas las multases igual a: %.2f", multaTotal);
+
+	if(fclose(infoext) != 0){
+		//Verifico la correcta salida del fichero
+		printf("Error cerrando el fichero.");
+	}
+
 	return multaTotal;
 }
 
