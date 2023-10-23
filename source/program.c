@@ -15,7 +15,7 @@ typedef struct {
 	int id_radar;
 	char matricula[N];
 	int velocidad;
-	float multa;
+	double multa;
 } T_MULTA;
 
 typedef struct {
@@ -116,7 +116,7 @@ int main(void)
 				CalculaNumMultas(pf_multas, &num_multas);
 				multas = (T_MULTA *)malloc(num_multas * sizeof(T_MULTA));
 				CargaMultasFichero(pf_multas, multas, num_multas);
-
+				CalculaMultas(multas, num_multas, radares, num_radares);
 				break;
 
 			case 2:
@@ -221,7 +221,39 @@ void CalculaNumMultas(FILE *pf_multas,int *num_multas)
 
 double CalculaMultas(T_MULTA *pmultas, int num_multas, T_RADAR *pradares, int num_radares)
 {
-	/*A rellenar por el alumno*/
+	//Se declara variables que contengan la id del radar y las velocidades
+	int idRadar, velocidadMulta, velocidadLimite, multaUmbral;
+	double umbral, velocidadMultaAux, multaTotal = 0;
+	for(int i = 0; i < num_multas; i++){
+		idRadar = (*pmultas).id_radar;
+		velocidadMulta = (*pmultas).velocidad;
+		velocidadMultaAux = velocidadMulta;
+		for(int j = 0; j < num_radares; j++){
+			if(idRadar == (*pradares).id_radar){
+				velocidadLimite = (*pradares).velocidad_limite;
+				pradares -= j;
+				break;
+			}else{
+				pradares ++;
+			}
+		}
+		umbral = ((velocidadMultaAux/velocidadLimite)-1) * 100;
+		if(umbral > 0 && umbral < 20){
+			multaUmbral = (*pradares).umbral20;
+			multaTotal += multaUmbral;
+		}
+		else if(umbral > 20 && umbral < 40){
+			multaUmbral = (*pradares).umbral40;
+			multaTotal += multaUmbral;
+		}
+		else if(umbral > 40){
+			multaUmbral = (*pradares).umbral_resto;
+			multaTotal += multaUmbral;
+		}
+		pmultas++;
+	}
+	printf("Multa total: %.2f", multaTotal);
+	return multaTotal;
 }
 
 
