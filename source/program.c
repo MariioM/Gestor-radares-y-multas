@@ -59,7 +59,7 @@ int main(void)
 	float total_multas;
 	FILE *pf_radares;
 	FILE *pf_multas;
-	int tipo_carga;
+	int tipo_carga, opcion, idRadarBuscado, posicion_buscada;
 
 	num_multas = 1;
 	num_radares = 1;
@@ -116,6 +116,60 @@ int main(void)
 				CalculaNumMultas(pf_multas, &num_multas);
 				multas = (T_MULTA *)malloc(num_multas * sizeof(T_MULTA));
 				CargaMultasFichero(pf_multas, multas, num_multas);
+
+				break;
+
+			case 2:
+				printf("\nSaliendo del programa...");
+				scanf("%c"); // Pulsar enter para continuar.
+				exit(1);
+				break;
+
+            default:
+				printf("\nOpción incorrecta.");
+            	break;
+        }
+				printf("\n  Elija una operación: \n\t 0) Calcular la Suma Total de las multas registradas.\n\t 1) Buscar un Radar mediante su ID..\n\t 2) Salir del programa.\n  => ");
+        scanf("%d",&opcion);
+
+        switch(opcion) {
+            case 0:
+            //CalculaMultas
+			//Dicha función se encargará de aplicar las sanciones correspondientes a cada vehiculo, y de sumar el importe total de todas ellas juntas.
+            CalculaMultas(multas, num_multas, radares, num_radares);
+
+            break;
+
+            case 1:
+				//BuscarRadar
+				//El usuario tecleará por pantalla el id del radar que desea buscar, se le mostrará
+				//si existe o no, y se le mostrará su información.
+
+				//Pedimos ID al usuario
+				printf("\nIntroduzca el id del radar que quiere buscar: ");
+				scanf("%d", &idRadarBuscado);
+
+				//La variable existe registrará si existe o no el radar que se busca
+				posicion_buscada = BuscarRadar(idRadarBuscado, radares, num_radares);
+				if(posicion_buscada != -1){
+					printf("\nEl radar con id: %d existe.\n", idRadarBuscado);
+					for(int i = 0; i < num_radares; i++){
+						if(i == posicion_buscada){
+							//Se muestran los datos que contiene el radar buscado.
+							printf("\nLa velocidad límite del radar es: %d.", (*radares).velocidad_limite);
+							printf("\nLa sancion del umbral de 0-20 porciento del radar es: %d.", (*radares).umbral20);
+							printf("\nLa sancion del umbral de 20-40 porciento del radar es: %d.", (*radares).umbral40);
+							printf("\nLa sancion del umbral de +40 porciento del radar es: %d.\n\n", (*radares).umbral_resto);
+						}
+						else{
+							radares++; //Si no es la posición que buscamos, necesito que el puntero apunte al siguiente radar del vector radares.
+						}
+					}
+					radares = radares - posicion_buscada; //Una vez encontrado el radar que buscamos, devolvemos el puntero a la primera posición, por si lo utilizamos de nuevo más adelante.
+				}
+				else{
+					printf("El radar con el id: %d no existe.", idRadarBuscado);
+				}
 
 				break;
 
@@ -227,7 +281,24 @@ double CalculaMultas(T_MULTA *pmultas, int num_multas, T_RADAR *pradares, int nu
 
 int BuscarRadar(int identificador_radar, T_RADAR *pradares, int num_radares)
 {
-	/*A rellenar por el alumno*/
+	int indice = 0; /*Esta variable nos ayudará a ir guardando la posición en la que estamos en 
+					cada caso. Se inicializa en 0 para que en la primera vuelta del radar lea el primer radar, ya que el puntero siempre apunta a la primera posición.*/
+	int indice_buscado = -1; //Me interesa guardar la posicion en la que se encuentra el radar, por lo que se enviará al main es el índice del radar buscado. 
+							//Lo inicializo en -1, por si no se encuentra el id buscado, saber que el valor -1 me dice que no existe.
+	for(int i = 0; i < num_radares; i++){
+		if(identificador_radar == (*pradares).id_radar){
+			/*Si coincide, guardamos en indice buscado el indice en el que estamos. Una vez encontrado, 
+			el indice buscado se quedará en la misma posición durante el resto del bucle*/
+			indice_buscado = indice;
+		}else{
+			/*Si el id buscado no coincide con el del radar estudiado, 
+			se pasa al siguiente radar disponible en el vector, y aumentamos el índice en 1 para poder guardarlo en el caso de que el siguiente radar sea el buscado*/
+			pradares++;
+			indice++;
+		}
+
+	}
+	return indice_buscado;
 }
 
 void cargaRadaresManual (T_RADAR *radares, int num_radares)
