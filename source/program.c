@@ -25,21 +25,40 @@ typedef struct {
 	int umbral40;
 	int umbral_resto;
 } T_RADAR;
-
 /// @brief Controla la entrada de datos manual de los radares.
 /// @param radares Array de radares a rellenar.
 /// @param num_radares Entero que representa el número total de
 /// 				   radares que se desean introducir.
 void cargaRadaresManual (T_RADAR *radares, int num_radares);
 /// @brief Controla la entrada de datos manual de las multas.
-/// @param radares Array de multas a rellenar.
+/// @param radares Array de radares a rellenar.
 /// @param num_radares Entero que representa el número total de
 /// 				   multas que se desean introducir.
 void cargaMultasManual(T_MULTA *multas, int num_multas);
+/// @brief Calcula el importe total de las multas
+/// @param multas Array de la lista de multas
+/// @param num_multas Entero que representa el número total de multas
+/// @param pradares Array de la lista de radares
+/// @param num_radares Entero que representa el número total de radares
+/// @return Devuelve el importe total
 double CalculaMultas(T_MULTA *multas, int num_multas, T_RADAR *pradares, int num_radares);
+/// @brief Calcula el número de radares que hay en un fichero
+/// @param pf_radares Fichero con los datos de los radares
+/// @param num_radares Puntero que contiene el número de radares
 void CalculaNumRadares(FILE *pf_radares,int *num_radares);
+/// @brief Calcula el número de multas que hay en un fichero
+/// @param pf_multas Fichero con los datos de las multas
+/// @param num_multas Puntero que contiene el número de multas
 void CalculaNumMultas(FILE *pf_multas,int *num_multas);
+/// @brief Carga los radares automáticamente con los datos de un fichero
+/// @param pf_radares Fichero con los datos de los radares
+/// @param radares Array de radares a rellenar
+/// @param num_rads Puntero que contiene el número de radares
 void CargaRadaresFichero(FILE *pf_radares, T_RADAR *radares, int num_rads);
+/// @brief Carga las multas automáticamente con los datos de un fichero
+/// @param pf_multas Fichero con los datos de las multas
+/// @param multas Array de multas a rellenar
+/// @param num_multas Puntero que contiene el número de multas
 void CargaMultasFichero(FILE *pf_multas, T_MULTA *multas, int num_multas);
 /// @brief Permite al usuario rellenar las diferentes características de los radares.
 /// @param p_radar Radar cuyas características se van a introducir.
@@ -224,20 +243,25 @@ double CalculaMultas(T_MULTA *pmultas, int num_multas, T_RADAR *pradares, int nu
 	//Se declara variables que contengan la id del radar y las velocidades
 	int idRadar, velocidadMulta, velocidadLimite, multaUmbral;
 	double umbral, velocidadMultaAux, multaTotal = 0;
+	//Se recorre el fichero de las multas para sacar los datos necesarios
 	for(int i = 0; i < num_multas; i++){
 		idRadar = (*pmultas).id_radar;
 		velocidadMulta = (*pmultas).velocidad;
 		velocidadMultaAux = velocidadMulta;
+		//Se recorre el fichero de los radares para calcular la multa
 		for(int j = 0; j < num_radares; j++){
 			if(idRadar == (*pradares).id_radar){
 				velocidadLimite = (*pradares).velocidad_limite;
+				//Se vuelve al inicio del puntero m.d
 				pradares -= j;
 				break;
 			}else{
 				pradares ++;
 			}
 		}
+		//Se calcula el porcentaje que se excedió en la multa
 		umbral = ((velocidadMultaAux/velocidadLimite)-1) * 100;
+		//Se calculan las multas en función del umbral excedido
 		if(umbral > 0 && umbral < 20){
 			multaUmbral = (*pradares).umbral20;
 			multaTotal += multaUmbral;
