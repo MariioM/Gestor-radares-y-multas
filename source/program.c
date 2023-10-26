@@ -25,40 +25,41 @@ typedef struct {
 	int umbral40;
 	int umbral_resto;
 } T_RADAR;
+
 /// @brief Controla la entrada de datos manual de los radares.
 /// @param radares Array de radares a rellenar.
 /// @param num_radares Entero que representa el número total de
 /// 				   radares que se desean introducir.
 void cargaRadaresManual (T_RADAR *radares, int num_radares);
 /// @brief Controla la entrada de datos manual de las multas.
-/// @param radares Array de radares a rellenar.
-/// @param num_radares Entero que representa el número total de
+/// @param multas Array de multas a rellenar.
+/// @param num_multas Entero que representa el número total de
 /// 				   multas que se desean introducir.
 void cargaMultasManual(T_MULTA *multas, int num_multas);
-/// @brief Calcula el importe total de las multas
-/// @param multas Array de la lista de multas
-/// @param num_multas Entero que representa el número total de multas
-/// @param pradares Array de la lista de radares
-/// @param num_radares Entero que representa el número total de radares
-/// @return Devuelve el importe total
+/// @brief Calcula el importe total de las multas.
+/// @param multas Array de multas.
+/// @param num_multas Entero que representa el número total de multas.
+/// @param pradares Array de radares.
+/// @param num_radares Entero que representa el número total de radares.
+/// @return Importe total de las multas.
 double CalculaMultas(T_MULTA *multas, int num_multas, T_RADAR *pradares, int num_radares);
-/// @brief Calcula el número de radares que hay en un fichero
-/// @param pf_radares Fichero con los datos de los radares
-/// @param num_radares Puntero que contiene el número de radares
+/// @brief Calcula el número de radares que hay en un fichero.
+/// @param pf_radares Fichero con los datos de los radares.
+/// @param num_radares Entero que representa el número de radares.
 void CalculaNumRadares(FILE *pf_radares,int *num_radares);
-/// @brief Calcula el número de multas que hay en un fichero
-/// @param pf_multas Fichero con los datos de las multas
-/// @param num_multas Puntero que contiene el número de multas
+/// @brief Calcula el número de multas que hay en un fichero.
+/// @param pf_multas Fichero con los datos de las multas.
+/// @param num_multas Entero que representa el número de multas.
 void CalculaNumMultas(FILE *pf_multas,int *num_multas);
-/// @brief Carga los radares automáticamente con los datos de un fichero
-/// @param pf_radares Fichero con los datos de los radares
-/// @param radares Array de radares a rellenar
-/// @param num_rads Puntero que contiene el número de radares
+/// @brief Carga los radares automáticamente con los datos de un ficher.
+/// @param pf_radares Fichero con los datos de los radares.
+/// @param radares Array de radares a rellenar.
+/// @param num_rads Entero que representa el número de radares.
 void CargaRadaresFichero(FILE *pf_radares, T_RADAR *radares, int num_rads);
-/// @brief Carga las multas automáticamente con los datos de un fichero
-/// @param pf_multas Fichero con los datos de las multas
-/// @param multas Array de multas a rellenar
-/// @param num_multas Puntero que contiene el número de multas
+/// @brief Carga las multas automáticamente con los datos de un fichero.
+/// @param pf_multas Fichero con los datos de las multas.
+/// @param multas Array de multas a rellenar.
+/// @param num_multas Puntero que contiene el número de multas.
 void CargaMultasFichero(FILE *pf_multas, T_MULTA *multas, int num_multas);
 /// @brief Permite al usuario rellenar las diferentes características de los radares.
 /// @param p_radar Radar cuyas características se van a introducir.
@@ -66,6 +67,11 @@ void RellenarUnRadar(T_RADAR *p_radar);
 /// @brief Permite al usuario rellenar las diferentes características de las multas.
 /// @param p_radar Multa cuyas características se van a introducir.
 void RellenarUnaMulta(T_MULTA *p_multa);
+/// @brief Busca si un radar existe.
+/// @param identificador_radar Id del radar que se desea buscar.
+/// @param pradares Array de radares.
+/// @param num_radares Número de radares.
+/// @return Si el radar existe devulve su id, si no -1.
 int BuscarRadar(int identificador_radar, T_RADAR *pradares, int num_radares);
 
 int main(void)
@@ -170,7 +176,7 @@ int main(void)
 				//La variable existe registrará si existe o no el radar que se busca
 				posicion_buscada = BuscarRadar(idRadarBuscado, radares, num_radares);
 				if(posicion_buscada != -1){
-					printf("\nEl radar con id: %d existe.\n", idRadarBuscado);
+					printf("\n\tEl radar con id: %d existe.\n", idRadarBuscado);
 					for(int i = 0; i < num_radares; i++){
 						if(i == posicion_buscada){
 							//Se muestran los datos que contiene el radar buscado.
@@ -356,7 +362,24 @@ double CalculaMultas(T_MULTA *pmultas, int num_multas, T_RADAR *pradares, int nu
 
 int BuscarRadar(int identificador_radar, T_RADAR *pradares, int num_radares)
 {
-	/*A rellenar por el alumno*/
+	int indice = 0; /*Esta variable nos ayudará a ir guardando la posición en la que estamos en 
+					cada caso. Se inicializa en 0 para que en la primera vuelta del radar lea el primer radar, ya que el puntero siempre apunta a la primera posición.*/
+	int indice_buscado = -1; //Me interesa guardar la posicion en la que se encuentra el radar, por lo que se enviará al main es el índice del radar buscado. 
+							//Lo inicializo en -1, por si no se encuentra el id buscado, saber que el valor -1 me dice que no existe.
+	for(int i = 0; i < num_radares; i++){
+		if(identificador_radar == (*pradares).id_radar){
+			/*Si coincide, guardamos en indice buscado el indice en el que estamos. Una vez encontrado, 
+			el indice buscado se quedará en la misma posición durante el resto del bucle*/
+			indice_buscado = indice;
+		}else{
+			/*Si el id buscado no coincide con el del radar estudiado, 
+			se pasa al siguiente radar disponible en el vector, y aumentamos el índice en 1 para poder guardarlo en el caso de que el siguiente radar sea el buscado*/
+			pradares++;
+			indice++;
+		}
+
+	}
+	return indice_buscado;
 }
 
 void cargaRadaresManual (T_RADAR *radares, int num_radares)
