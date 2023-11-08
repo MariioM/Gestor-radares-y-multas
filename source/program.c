@@ -147,7 +147,7 @@ int main(void)
 				printf("\nOpción incorrecta.");
             	break;
         }
-					printf("\n  Elija una operación: \n\t 0) Calcular la Suma Total de las multas registradas.\n\t 1) Buscar un Radar mediante su ID..\n\t 2) Salir del programa.\n  => ");
+		printf("\n  Elija una operación: \n\t 0) Calcular la Suma Total de las multas registradas.\n\t 1) Buscar un Radar mediante su ID..\n\t 2) Salir del programa.\n  => ");
         scanf("%d",&opcion);
 
         switch(opcion) {
